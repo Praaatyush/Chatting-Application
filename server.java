@@ -1,3 +1,4 @@
+package jFrame;
 import java.awt.event.*;
 import java.net.ServerSocket;
 import javax.swing.*;
@@ -11,6 +12,8 @@ import java.util.Calendar;
 import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.time.LocalDateTime;  
+import java.time.format.DateTimeFormatter;
 
 public class server extends JFrame implements ActionListener {
 
@@ -165,13 +168,25 @@ public class server extends JFrame implements ActionListener {
     }*/
     public void sendTextToFile(String msg) throws FileNotFoundException
     {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        JLabel l2 = new JLabel();
+        l2.setText(sdf.format(cal.getTime()));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");  
+         LocalDateTime now = LocalDateTime.now();  
+         String da = now.format(dtf);
+        String ti = l2.getText();
+        String username = "Server";
         String chatrec = t1.getText();
         try
         {
            Connection con = DBConnection.getConnection();
-           String sql = "insert into chat(chat_server) values(?)";
+           String sql = "insert into chat(date,time,name_user,chat) values(?,?,?,?)";
            PreparedStatement pst = con.prepareStatement(sql);
-           pst.setString(1,chatrec);
+           pst.setString(1,da);
+           pst.setString(2,ti);
+           pst.setString(3,username);
+           pst.setString(4,chatrec);
            int updatedRowCount = pst.executeUpdate();
         
         }
