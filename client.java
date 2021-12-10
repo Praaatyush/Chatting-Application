@@ -1,3 +1,4 @@
+package jFrame;
 import java.awt.event.*;
 import java.net.Socket;
 import javax.swing.*;
@@ -11,6 +12,8 @@ import java.util.Calendar;
 import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.time.LocalDateTime;  
+import java.time.format.DateTimeFormatter;
 
 public class client extends JFrame implements ActionListener {
 
@@ -149,27 +152,32 @@ public class client extends JFrame implements ActionListener {
             t1.setText("");
             
         } catch (Exception e) {
-
+           e.printStackTrace();
         }
     }
-    // send file to txt doc
-       /* public void sendTextToFile(String msg) throws FileNotFoundException{
-        try( FileWriter f = new FileWriter("chat.txt",true);
-                PrintWriter p = new PrintWriter(new BufferedWriter(f));){
-            p.println("Pratyush : "+ msg);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }*/
+
     public void sendTextToFile(String msg) throws FileNotFoundException
     {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        JLabel l2 = new JLabel();
+        l2.setText(sdf.format(cal.getTime()));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");  
+        LocalDateTime now = LocalDateTime.now();  
+        String da = now.format(dtf);
+        String ti = l2.getText();
+        String username = "User";
         String chatrec = t1.getText();
         try
         {
            Connection con = DBConnection.getConnection();
-           String sql = "insert into chat(chat_client) values(?)";
+           String sql = "insert into chat(date,time,name_user,chat) values(?,?,?,?)";
            PreparedStatement pst = con.prepareStatement(sql);
-           pst.setString(1,chatrec);
+           pst.setString(1,da);
+           pst.setString(2,ti);
+           pst.setString(3,username);
+           pst.setString(4,chatrec);
+           
            int updatedRowCount = pst.executeUpdate();
         
         }
@@ -181,7 +189,8 @@ public class client extends JFrame implements ActionListener {
 
 
         
-    public static JPanel formatLabel(String out){
+    public static JPanel formatLabel(String out)
+    {
         JPanel p3 = new JPanel();
         p3.setLayout(new BoxLayout(p3,BoxLayout.Y_AXIS));
         
@@ -202,8 +211,9 @@ public class client extends JFrame implements ActionListener {
         return p3;
     }
 
-    public static void main(String[] args) {
-        new client().setVisible(true);
+    public static void main(String[] args) 
+    {
+        new client().f1.setVisible(true);
         
 
         try {
@@ -225,7 +235,7 @@ public class client extends JFrame implements ActionListener {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }
